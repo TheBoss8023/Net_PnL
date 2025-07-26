@@ -30,56 +30,66 @@ class NetPnLCalculator(tk.Tk):
         """
         super().__init__()
         self.title("Net P&L")
-        self.geometry("600x400")
+        self.geometry("400x520")  # Adjusted for vertical stacking and centering
         self.ce_entries = []  # Entry widgets for CE values
         self.pe_entries = []  # Entry widgets for PE values
         self.create_widgets()
 
     def create_widgets(self):
         """
-        Create and arrange all widgets in the GUI using grid layout.
+        Create and arrange all widgets in the GUI using grid layout, centered.
         """
-        # Labels for columns
-        ttk.Label(self, text="CE", font=(None, 12, "bold")).grid(row=0, column=0, padx=10)
-        ttk.Label(self, text="PE", font=(None, 12, "bold")).grid(row=0, column=2, padx=10)
+        # Configure grid columns for centering and spacing
+        for col in range(4):
+            self.grid_columnconfigure(col, weight=1)
 
-        # Entry boxes for CE and PE
+        # Labels for columns (centered)
+        ttk.Label(self, text="CE", font=(None, 12, "bold"), anchor="center", justify="center").grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        ttk.Label(self, text="PE", font=(None, 12, "bold"), anchor="center", justify="center").grid(row=0, column=2, padx=10, pady=5, sticky="ew")
+
+        # Entry boxes for CE and PE (centered)
         for i in range(10):
-            ce_entry = ttk.Entry(self, width=10)
-            ce_entry.grid(row=i+1, column=0, padx=5, pady=2)
+            ce_entry = ttk.Entry(self, width=10, justify="center")
+            ce_entry.grid(row=i+1, column=1, padx=5, pady=2, sticky="ew")
             self.ce_entries.append(ce_entry)
-            pe_entry = ttk.Entry(self, width=10)
-            pe_entry.grid(row=i+1, column=2, padx=5, pady=2)
+            pe_entry = ttk.Entry(self, width=10, justify="center")
+            pe_entry.grid(row=i+1, column=2, padx=5, pady=2, sticky="ew")
             self.pe_entries.append(pe_entry)
 
-        # Totals
+        # Totals as Entry boxes directly below CE and PE columns
         self.ce_total_var = tk.StringVar()
         self.pe_total_var = tk.StringVar()
-        ttk.Label(self, text="CE Total:").grid(row=11, column=0, sticky="e")
-        ttk.Label(self, textvariable=self.ce_total_var).grid(row=11, column=1, sticky="w")
-        ttk.Label(self, text="PE Total:").grid(row=11, column=2, sticky="e")
-        ttk.Label(self, textvariable=self.pe_total_var).grid(row=11, column=3, sticky="w")
+        ttk.Label(self, text="CE Total:", anchor="center", justify="center").grid(row=11, column=1, sticky="ew", padx=5)
+        self.ce_total_entry = ttk.Entry(self, textvariable=self.ce_total_var, width=12, justify="center", state="normal")
+        self.ce_total_entry.grid(row=12, column=1, padx=5, pady=2, sticky="ew")
+        ttk.Label(self, text="PE Total:", anchor="center", justify="center").grid(row=11, column=2, sticky="ew", padx=5)
+        self.pe_total_entry = ttk.Entry(self, textvariable=self.pe_total_var, width=12, justify="center", state="normal")
+        self.pe_total_entry.grid(row=12, column=2, padx=5, pady=2, sticky="ew")
 
-        # Initial Balance
-        ttk.Label(self, text="Initial Balance:").grid(row=12, column=0, sticky="e", pady=10)
-        self.initial_balance_entry = ttk.Entry(self, width=15)
-        self.initial_balance_entry.grid(row=12, column=1, padx=5, pady=10)
-
-        # Net P&L and Net Balance
+        # Initial Balance (centered, own row)
         self.net_pnl_var = tk.StringVar()
-        self.net_balance_var = tk.StringVar()
-        ttk.Label(self, text="Net P&L:").grid(row=13, column=0, sticky="e")
-        ttk.Label(self, textvariable=self.net_pnl_var).grid(row=13, column=1, sticky="w")
-        ttk.Label(self, text="Net Balance:").grid(row=13, column=2, sticky="e")
-        ttk.Label(self, textvariable=self.net_balance_var).grid(row=13, column=3, sticky="w")
+        ttk.Label(self, text="Initial Balance:", anchor="center", justify="center").grid(row=13, column=1, columnspan=2, sticky="ew", pady=10)
+        self.initial_balance_entry = ttk.Entry(self, width=15, justify="center")
+        self.initial_balance_entry.grid(row=14, column=1, columnspan=2, padx=5, pady=2, sticky="ew")
 
-        # Calculate button
+        # Net P&L (centered, own row)
+        ttk.Label(self, text="Net P&L:", anchor="center", justify="center").grid(row=15, column=1, columnspan=2, sticky="ew", padx=5)
+        self.net_pnl_entry = ttk.Entry(self, textvariable=self.net_pnl_var, width=12, justify="center", state="normal")
+        self.net_pnl_entry.grid(row=16, column=1, columnspan=2, padx=5, pady=2, sticky="ew")
+
+        # Net Balance (centered, own row)
+        self.net_balance_var = tk.StringVar()
+        ttk.Label(self, text="Net Balance:", anchor="center", justify="center").grid(row=17, column=1, columnspan=2, sticky="ew", padx=5)
+        self.net_balance_entry = ttk.Entry(self, textvariable=self.net_balance_var, width=12, justify="center", state="normal")
+        self.net_balance_entry.grid(row=18, column=1, columnspan=2, padx=5, pady=2, sticky="ew")
+
+        # Calculate button (centered below all)
         calc_btn = ttk.Button(self, text="Calculate", command=self.calculate)
-        calc_btn.grid(row=14, column=0, columnspan=4, pady=15)
+        calc_btn.grid(row=19, column=1, columnspan=2, pady=15, sticky="ew")
 
     def calculate(self):
         """
-        Calculate CE total, PE total, Net P&L, and Net Balance. Update the display variables.
+        Calculate CE total, PE total, Net P&L, and Net Balance. Update the display variables and Entry boxes.
         """
         ce_total = sum(self._get_entry_value(e) for e in self.ce_entries)
         pe_total = sum(self._get_entry_value(e) for e in self.pe_entries)
