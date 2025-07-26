@@ -1,0 +1,2 @@
+# Requirements for Net P&L Calculator
+# tkinter is included with standard Python installations, but mention for completeness
